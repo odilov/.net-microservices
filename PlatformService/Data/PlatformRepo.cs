@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using PlatformService.Models;
 
-namespace PlatformService.Data{
-    public class PlatformRepo : IPlatformRepo{
+namespace PlatformService.Data {
+    public class PlatformRepo : IPlatformRepo {
         private readonly AppDbContext _context;
 
         public PlatformRepo( AppDbContext context ){

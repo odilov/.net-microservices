@@ -2,7 +2,7 @@ using AutoMapper;
 using PlatformService.DTOs;
 using PlatformService.Models;
 
-namespace PlatformService.Profiles{
+namespace PlatformService.Profiles {
     public class PlatformsProfile : Profile {
         public PlatformsProfile(){
             // source -> target

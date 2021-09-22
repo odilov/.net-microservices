@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using PlatformService.Models;
 
-namespace PlatformService.Data{
-    public static class PrepDb{
+namespace PlatformService.Data {
+    public static class PrepDb {
         public static void PrepPopulation( IApplicationBuilder app ){
             using ( var serviceScope = app.ApplicationServices.CreateScope(  ) ){
                 SeedData( serviceScope.ServiceProvider.GetService< AppDbContext >() );
@@ -13,7 +13,7 @@ namespace PlatformService.Data{
         }
         private static void SeedData( AppDbContext context ){
             if( !context.Platforms.Any() ){
-                Console.WriteLine( "--> seeding data" );
+                Console.WriteLine( "--> Seeding Data" );
                 context.AddRange( new Platform(){
                     Name = "Dot Net",
                     Publisher = "Microsoft",
@@ -21,7 +21,7 @@ namespace PlatformService.Data{
                 } );
                 context.SaveChanges();
             } else {
-                Console.WriteLine( "--> data already exists" );
+                Console.WriteLine( "--> Data already exists" );
             }
         }
     }

@@ -1,5 +1,5 @@
-namespace PlatformService.DTOs{
-    public class PlatformReadDto{
+namespace PlatformService.DTOs {
+    public class PlatformReadDto {
         public int ID { get; set; }
         public string Name { get; set; }
         public string Publisher { get; set; }
