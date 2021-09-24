@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data;
 using PlatformService.DTOs;
 using PlatformService.Models;
+using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Controllers {
     [Route( "api/[controller]" )]
@@ -12,9 +14,12 @@ namespace PlatformService.Controllers {
     public class PlatformsController : ControllerBase {
         private readonly IPlatformRepo _repository;
         private readonly IMapper _mapper;
-        public PlatformsController( IPlatformRepo repository, IMapper mapper ){
+        private readonly ICommandDataClient _commandDataClient;
+
+        public PlatformsController( IPlatformRepo repository, IMapper mapper, ICommandDataClient commandDataClient ){
               _repository = repository;
               _mapper = mapper;
+              _commandDataClient = commandDataClient;
         }
         [HttpGet]
         public ActionResult <IEnumerable<PlatformReadDto>> GetPlatforms(){
@@ -31,11 +36,20 @@ namespace PlatformService.Controllers {
             return NotFound();
         }
         [HttpPost]
-        public ActionResult<PlatformReadDto> CreatePlatform( PlatformCreateDto platform ){
+        public async Task<ActionResult<PlatformReadDto>> CreatePlatform( PlatformCreateDto platform ){
             var platformModel = _mapper.Map<Platform>( platform );
             _repository.CreatePlatform( platformModel );
             _repository.SaveChanges();
             var platformReadDto = _mapper.Map<PlatformReadDto>( platformModel );
+
+            try{
+               await _commandDataClient.SendToCommandService( platformReadDto );  
+            }
+            catch( Exception excep ){
+                Console.WriteLine( $"--> Couldn't send a sync req : { excep.Message }" );
+                throw;
+            }
+
             return CreatedAtRoute( nameof( GetPlatformById ),  new { ID = platformReadDto.ID }, platformReadDto );
         }
     }
