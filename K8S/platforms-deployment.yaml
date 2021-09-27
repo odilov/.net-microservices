@@ -15,7 +15,8 @@ spec:
       containers:
         - name: platformservice
           image: odilov/platformservice:latest
---- # separate  the deployment from the cluster ip config
+--- 
+# separate  the deployment from the cluster ip config
 apiVersion: v1
 kind: Service
 metadata:
