@@ -15,3 +15,17 @@ spec:
       containers:
         - name: platformservice
           image: odilov/platformservice:latest
+--- # separate  the deployment from the cluster ip config
+apiVersion: v1
+kind: Service
+metadata:
+  name: platforms-clusterip-service
+spec:
+  type: ClusterIP
+  selector: 
+    app: platformservice
+  ports:
+  - name: platformservice
+    protocol: TCP
+    port: 80
+    targetPort: 80
