@@ -1,4 +1,4 @@
-# .net-microservices ![visitors](https://visitor-badge.glitch.me/badge?page_id=odilov.net-microservices)
+# dotnet-microservices ![visitors](https://visitor-badge.glitch.me/badge?page_id=odilov.net-microservices)
 
 ## Kubernetes Architecture
 
