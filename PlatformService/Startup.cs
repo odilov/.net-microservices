@@ -19,26 +19,35 @@ namespace PlatformService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _env;
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
-
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext <AppDbContext> ( opt  => opt.UseInMemoryDatabase("InMemory") );
-            services.AddScoped <IPlatformRepo, PlatformRepo>();
-            services.AddHttpClient <ICommandDataClient, HttpCommandDataClient>();
+            if (_env.IsProduction())
+            {
+                Console.WriteLine("--> Using SQL server");
+                services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("PlatformsConnection")));
+            }
+            else
+            {
+                Console.WriteLine("--> Using InMemory DB");
+                services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMemory"));
+            }
+            services.AddScoped<IPlatformRepo, PlatformRepo>();
+            services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
             services.AddControllers();
-            services.AddAutoMapper( AppDomain.CurrentDomain.GetAssemblies() );
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlatformService", Version = "v1" });
             });
-            Console.WriteLine( $"--> ComandService EndPoint {Configuration["CommandService"]}" );
+            Console.WriteLine($"--> ComandService EndPoint {Configuration["CommandService"]}");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,7 +71,7 @@ namespace PlatformService
                 endpoints.MapControllers();
             });
 
-            PrepDb.PrepPopulation( app );
+            PrepDb.PrepPopulation(app);
 
         }
     }
